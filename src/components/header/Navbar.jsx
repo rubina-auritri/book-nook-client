@@ -31,7 +31,7 @@ export default function Navbar() {
     ...(user
       ? [
           { name: "Add Book", href: "/AddBook" },
-          { name: "My Books", href: "/MyBook" },
+          { name: "My Books", href: "/MyBooks" },
           { name: "My Borrows", href: "/MyBorrows" },
         ]
       : []),
