@@ -49,8 +49,8 @@ export default function MyBooksTable({ books , onDelete }) {
                 <TableCell>
                   <div className="flex gap-2">
                     <Button asChild size="sm">
-                      <Link href={`/update-book/${book._id}`}>
-                        Update
+                      <Link href={`/edit-book/${book._id}`}>
+                        Edit
                       </Link>
                     </Button>
 
