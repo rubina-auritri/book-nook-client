@@ -1,9 +1,13 @@
-import Image from "next/image";
+import HeroSlider from "@/components/Home/HeroSlider";
+import NewArrivals from "../components/NewArrival/NewArrival";
+import ExtraSections from "../components/NewArrival/ExtraSections";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-    
-    </div>
+    <main className="min-h-screen bg-zinc-50">
+      <HeroSlider />
+      <NewArrivals/>
+      <ExtraSections/>
+    </main>
   );
 }

@@ -1,12 +1,11 @@
 import React from 'react';
 
-const Allbooks = () => {
+const page = () => {
     return (
         <div>
-            allbooks
-            
+            MyBooks
         </div>
     );
 };
 
-export default Allbooks;
+export default page;
