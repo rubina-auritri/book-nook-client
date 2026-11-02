@@ -6,7 +6,7 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 import {
   Dialog,
@@ -37,21 +37,28 @@ const BorrowDialog = ({ book }) => {
       }
 
       // Send borrow request
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/borrows`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${data.token}`,
-          },
-          body: JSON.stringify({
-            bookId: book._id,
-            bookTitle: book.title,
-            bookImage: book.image,
-          }),
-        }
-      );
+    const response = await fetch(
+  "http://localhost:5000/borrows",
+  {
+    method: "POST",
+        headers: {
+        "Content-Type": "application/json",
+      Authorization: `Bearer ${data.token}`,
+    },
+    body: JSON.stringify({
+      bookId: book._id,
+      bookTitle: book.title,
+      bookImage: book.image,
+    }),
+  }
+);
+if (!response.ok) {
+  const errorData = await response.json();
+  toast.error(errorData.message);
+  return;
+}
+
+toast.success("Book borrowed successfully!");
 
       const result = await response.json();
 
