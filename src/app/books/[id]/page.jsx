@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import {
   Card,
   CardContent,
@@ -13,14 +14,21 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
+
 const BookDetails = async ({ params }) => {
   const { id } = await params;
-
+  const jwttoken = await auth.api.getToken({
+  headers: await headers(),
+});
   const response = await fetch(
     `http://localhost:5000/books/${id}`,
     {
       cache: "no-store",
-    }
+      headers: {
+              Authorization: `Bearer ${jwttoken.token}`,
+            },
+    },
+
   );
 
   if (response.status === 404) {

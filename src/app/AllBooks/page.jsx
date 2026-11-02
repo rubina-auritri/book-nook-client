@@ -2,15 +2,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import AllBookCard from "@/components/AllBooks/AllBookCard";
+
 const Books = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBooks = async () => {
+
+      
       try {
-        const res = await fetch("http://localhost:5000/books");
+        const res = await fetch("http://localhost:5000/books", {
+          
+        });
         const data = await res.json();
 
         setBooks(data);
