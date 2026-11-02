@@ -7,11 +7,11 @@ import { authClient } from "@/lib/auth-client";
 
 import { toast } from "react-hot-toast";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
 
 import {
@@ -49,9 +49,19 @@ const EditBook = () => {
         if (!session?.user?.email || !id) return;
 
         const fetchBook = async () => {
+
             try {
+                const jwttoken = await authClient.token();
+                if (!jwttoken?.data?.token) {
+                    throw new Error("JWT token not found");
+                }
                 const res = await fetch(
-                    `http://localhost:5000/books/${id}`
+                    `http://localhost:5000/books/${id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${jwttoken.data.token}`,
+                        },
+                    }
                 );
 
                 if (!res.ok) {
@@ -101,12 +111,17 @@ const EditBook = () => {
         setUpdating(true);
 
         try {
+            const jwttoken = await authClient.token();
+                if (!jwttoken?.data?.token) {
+                    throw new Error("JWT token not found");
+                }
             const res = await fetch(
                 `http://localhost:5000/books/${id}`,
                 {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
+                         Authorization: `Bearer ${jwttoken.data.token}`,
                     },
                     body: JSON.stringify({
                         ...book,
