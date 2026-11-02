@@ -2,7 +2,8 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "@/lib/auth-client";
+import { useSession, } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { toast } from "react-hot-toast";
 
 import { Field, FieldGroup } from "@/components/ui/field";
@@ -57,139 +58,144 @@ const AddBookForm = () => {
     try {
       setLoading(true);
 
+      const jwttoken = await authClient.token();
+      if (!jwttoken?.data?.token) {
+        throw new Error("JWT token not found");
+      }
       const res = await fetch("http://localhost:5000/books", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${jwttoken.data.token}`,
         },
-        body: JSON.stringify(bookData),
-      });
+          body: JSON.stringify(bookData),
+        });
 
-      const result = await res.json();
+        const result = await res.json();
 
-      if (!res.ok) {
-        throw new Error(result.message || "Book adding failed");
+        if (!res.ok) {
+          throw new Error(result.message || "Book adding failed");
+        }
+
+        toast.success("Book added successfully!");
+
+        form.reset();
+        setCategory("");
+        setImage("");
+        router.push("/AllBooks");
+      } catch (error) {
+        toast.error(error.message || "Something went wrong");
+        console.log(error);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      toast.success("Book added successfully!");
-
-      form.reset();
-      setCategory("");
-      setImage("");
-      router.push("/AllBooks");
-    } catch (error) {
-      toast.error(error.message || "Something went wrong");
-      console.log(error);
-    } finally {
-      setLoading(false);
+    if (isPending) {
+      return <p className="text-center py-10">Loading...</p>;
     }
+
+    if (!user) {
+      return <p className="text-center py-10">Please login to add a book.</p>;
+    }
+
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-10">
+        <Card>
+          <CardHeader>
+            <CardTitle>Add Book</CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <FieldGroup>
+                <Field>
+                  <Label htmlFor="title">Book Title</Label>
+                  <Input
+                    id="title"
+                    name="title"
+                    placeholder="Enter book title"
+                    required
+                  />
+                </Field>
+
+                <Field>
+                  <Label htmlFor="author">Author Name</Label>
+                  <Input
+                    id="author"
+                    name="author"
+                    placeholder="Enter author name"
+                    required
+                  />
+                </Field>
+                <Field>
+                  <Label htmlFor="image">Book Image URL</Label>
+                  <Input
+                    id="image"
+                    type="url"
+                    placeholder="Enter image URL"
+                    name="image"
+                    value={image}
+                    required
+                    onChange={(e) => setImage(e.target.value)}
+                  />
+                </Field>
+
+                <Field>
+                  <Label>Category</Label>
+                  <Select
+                    value={category}
+                    onValueChange={setCategory}
+                    required
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="Fiction">Fiction</SelectItem>
+                      <SelectItem value="Science">Science</SelectItem>
+                      <SelectItem value="History">History</SelectItem>
+                      <SelectItem value="Kids">Kids</SelectItem>
+                      <SelectItem value="Others">Others</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+                <Field>
+                  <Label htmlFor="description">Short Description</Label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    placeholder="Write a short description..."
+                    rows={4}
+                    required
+                  />
+                </Field>
+
+                <Field>
+                  <Label>User Name</Label>
+                  <Input value={user.name || ""} readOnly />
+                </Field>
+
+                <Field>
+                  <Label>User Email</Label>
+                  <Input value={user.email || ""} readOnly />
+                </Field>
+              </FieldGroup>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading || !category}
+              >
+                {loading ? "Adding Book..." : "Add Book"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
   };
 
-  if (isPending) {
-    return <p className="text-center py-10">Loading...</p>;
-  }
-
-  if (!user) {
-    return <p className="text-center py-10">Please login to add a book.</p>;
-  }
-
-  return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
-      <Card>
-        <CardHeader>
-          <CardTitle>Add Book</CardTitle>
-        </CardHeader>
-
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <FieldGroup>
-              <Field>
-                <Label htmlFor="title">Book Title</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  placeholder="Enter book title"
-                  required
-                />
-              </Field>
-
-              <Field>
-                <Label htmlFor="author">Author Name</Label>
-                <Input
-                  id="author"
-                  name="author"
-                  placeholder="Enter author name"
-                  required
-                />
-              </Field>
-              <Field>
-                <Label htmlFor="image">Book Image URL</Label>
-                <Input
-                  id="image"
-                  type="url"
-                  placeholder="Enter image URL"
-                  name="image"
-                  value={image}
-                  required
-                  onChange={(e) => setImage(e.target.value)}
-                />
-              </Field>
-
-              <Field>
-                <Label>Category</Label>
-                <Select
-                  value={category}
-                  onValueChange={setCategory}
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    <SelectItem value="Fiction">Fiction</SelectItem>
-                    <SelectItem value="Science">Science</SelectItem>
-                    <SelectItem value="History">History</SelectItem>
-                    <SelectItem value="Kids">Kids</SelectItem>
-                    <SelectItem value="Others">Others</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-
-              <Field>
-                <Label htmlFor="description">Short Description</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  placeholder="Write a short description..."
-                  rows={4}
-                  required
-                />
-              </Field>
-
-              <Field>
-                <Label>User Name</Label>
-                <Input value={user.name || ""} readOnly />
-              </Field>
-
-              <Field>
-                <Label>User Email</Label>
-                <Input value={user.email || ""} readOnly />
-              </Field>
-            </FieldGroup>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading || !category}
-            >
-              {loading ? "Adding Book..." : "Add Book"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
-
-export default AddBookForm;
+  export default AddBookForm;
