@@ -1,11 +1,11 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import MyBooksTable from "@/components/MyBooksTable";
-import { useSession } from "@/lib/auth-client";
+import { useSession, authClient } from "@/lib/auth-client";
 import { redirect } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
-
+import { toast } from "sonner";
 
 const Page = () => {
   const { data: session, isPending } = useSession();
@@ -13,32 +13,80 @@ const Page = () => {
 
   useEffect(() => {
     const fetchBooks = async () => {
-      if (session?.user?.email) {
-        try {
-          const jwttoken = await authClient.token();
-          if (!jwttoken?.data?.token) {
-            throw new Error("JWT token not found");
-          }
+      if (!session?.user?.email) return;
 
-          const res = await fetch(
-            `http://localhost:5000/my-books/${encodeURIComponent(session.user.email)}`,
-            {
-              headers: {
-                Authorization: `Bearer ${jwttoken.data.token}`,
-              },
-            }
-          );
+      try {
+        const jwttoken = await authClient.token();
 
-          const data = await res.json();
-          setBooks(data);
-        } catch (error) {
-          console.error(error);
+        if (!jwttoken?.data?.token) {
+          throw new Error("JWT token not found");
         }
+
+        const res = await fetch(
+          `http://localhost:5000/my-books/${encodeURIComponent(
+            session.user.email
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${jwttoken.data.token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error(`Fetch failed: ${res.status}`);
+        }
+
+        const data = await res.json();
+        setBooks(data);
+
+      } catch (error) {
+        console.error("Fetch books error:", error);
+        toast.error(error.message);
       }
     };
 
     fetchBooks();
   }, [session]);
+
+  const handleDelete = async (id) => {
+    try {
+       const jwttoken = await authClient.token();
+
+        if (!jwttoken?.data?.token) {
+          throw new Error("JWT token not found");
+        }
+
+      const res = await fetch(
+        `http://localhost:5000/books/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${jwttoken.data.token}`,
+          },
+          
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Delete failed");
+      }
+
+      setBooks((prev) =>
+        prev.filter((book) => book._id !== id)
+      );
+
+      toast.success("Book deleted successfully!");
+
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error(error.message);
+    }
+  };
+
   if (isPending) {
     return <p className="text-center py-10">Loading...</p>;
   }
@@ -46,29 +94,6 @@ const Page = () => {
   if (!session) {
     redirect("/login");
   }
-
-  const handleDelete = async (id) => {
-    try {
-      const res = await fetch(
-        `http://localhost:5000/books/${id}`,
-        {
-          method: "DELETE",
-          A
-        }
-      );
-
-      if (!res.ok) throw new Error("Delete failed");
-
-      setBooks((prev) =>
-        prev.filter((book) => book._id !== id)
-      );
-
-      toast.success("Book deleted successfully!");
-    } catch (error) {
-      toast.error("Failed to delete book!");
-    }
-  };
-
 
   return (
     <div className="container mx-auto px-4 py-12">

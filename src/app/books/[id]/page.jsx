@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import  BorrowDialog  from "@/components/BorrowDialog";
 import {
   Card,
   CardContent,
@@ -18,15 +19,15 @@ import { Separator } from "@/components/ui/separator";
 const BookDetails = async ({ params }) => {
   const { id } = await params;
   const jwttoken = await auth.api.getToken({
-  headers: await headers(),
-});
+    headers: await headers(),
+  });
   const response = await fetch(
     `http://localhost:5000/books/${id}`,
     {
       cache: "no-store",
       headers: {
-              Authorization: `Bearer ${jwttoken.token}`,
-            },
+        Authorization: `Bearer ${jwttoken.token}`,
+      },
     },
 
   );
@@ -113,9 +114,7 @@ const BookDetails = async ({ params }) => {
               {/* Actions */}
               <div className="space-y-3">
 
-                <Button className="w-full" size="lg">
-                  Borrow This Book
-                </Button>
+                 <BorrowDialog book={book} />
 
                 <Button
                   variant="outline"
