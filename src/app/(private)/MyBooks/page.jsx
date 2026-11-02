@@ -28,9 +28,31 @@ const Page = () => {
     redirect("/login");
   }
 
+  const handleDelete = async (id) => {
+  try {
+    const res = await fetch(
+      `http://localhost:5000/books/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!res.ok) throw new Error("Delete failed");
+
+    setBooks((prev) =>
+      prev.filter((book) => book._id !== id)
+    );
+
+    toast.success("Book deleted successfully!");
+  } catch (error) {
+    toast.error("Failed to delete book!");
+  }
+};
+
+
   return (
     <div className="container mx-auto px-4 py-12">
-      <MyBooksTable books={books} />
+      <MyBooksTable books={books} onDelete={handleDelete} />
     </div>
   );
 };
