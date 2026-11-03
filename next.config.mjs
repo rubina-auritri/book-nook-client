@@ -12,7 +12,11 @@ const nextConfig = {
   experimental: {
     agentFeedback: true,
   },
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 061db1f0cdcea9650650d3889205b14345d7ac68
   reactCompiler: true,
   turbopack: {
     rules: {
