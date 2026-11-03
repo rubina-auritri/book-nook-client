@@ -13,22 +13,29 @@ export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
-   secret: process.env.BETTER_AUTH_SECRET,
+  secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
-        enabled: true,
+    enabled: true,
+  },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
+  },
 
-     plugins: [
-        jwt(), 
-    ],
-    session: {
-      cookieCache: {enabled: true,
-        strategy: 'jwt',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-      },
+  plugins: [
+    jwt(),
+  ],
+  session: {
+    cookieCache: {
+      enabled: true,
+      strategy: 'jwt',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     },
+  },
 
-      
-      
+
+
 
 });

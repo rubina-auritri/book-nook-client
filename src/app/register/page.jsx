@@ -1,11 +1,15 @@
 "use client";
 
 import { useState } from "react";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { FaGoogle } from "react-icons/fa";
 
 import { authClient } from "@/lib/auth-client";
+import { signUp, signIn } from "@/lib/auth-client";
+
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +24,7 @@ import {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [socialLoading, setSocialLoading] = useState("");
 
   const [loading, setLoading] = useState(false);
 
@@ -64,6 +69,33 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+
+
+  const handleSocialLogin = async (provider) => {
+    setSocialLoading(provider);
+
+    try {
+      const { error } = await signIn.social({
+        provider,
+        callbackURL: "/",
+      });
+
+      if (error) {
+        toast.error(
+          error.message || "SOCIAL LOGIN ERROR"
+        );
+
+        setSocialLoading("");
+      }
+    } catch (error) {
+      console.error("SOCIAL LOGIN ERROR:", error);
+
+      toast.error("SOCIAL LOGIN ERROR");
+
+      setSocialLoading("");
+    }
+  };
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4 py-10">
@@ -145,6 +177,22 @@ export default function RegisterPage() {
             >
               {loading ? "Registering..." : "Register"}
             </Button>
+
+            {/* Google */}
+          <button
+            type="button"
+            className="btn btn-outline w-full"
+            disabled={socialLoading !== ""}
+            onClick={() => handleSocialLogin("google")}
+          >
+            {socialLoading === "google" ? (
+              <span className="loading loading-spinner loading-sm"></span>
+            ) : (
+              <FaGoogle />
+            )}
+
+           Continue with Google 
+          </button>
 
           </form>
 
