@@ -8,7 +8,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 const AllBookCard = ({ book }) => {
@@ -42,11 +42,12 @@ const AllBookCard = ({ book }) => {
 
       {/* Details Button */}
       <CardFooter className="p-4 pt-0">
-        <Button asChild className="w-full">
-          <Link href={`/books/${_id}`}>
-            View Details
-          </Link>
-        </Button>
+        <Link
+          href={`/books/${_id}`}
+          className={buttonVariants({ className: "w-full" })}
+        >
+          View Details
+        </Link>
       </CardFooter>
     </Card>
   );

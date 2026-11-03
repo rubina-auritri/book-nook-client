@@ -20,7 +20,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function MyBooksTable({ books, onDelete }) {
@@ -59,17 +59,20 @@ export default function MyBooksTable({ books, onDelete }) {
 
                                 <TableCell>
                                     <div className="flex gap-2">
-                                        <Button asChild size="sm">
-                                            <Link href={`/edit-book/${book._id}`}>
-                                                Edit
-                                            </Link>
-                                        </Button>
+                                        <Link
+                                            href={`/edit-book/${book._id}`}
+                                            className={buttonVariants({ size: "sm" })}
+                                        >
+                                            Edit
+                                        </Link>
 
                                         <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                                <Button size="sm" variant="destructive">
-                                                    Delete
-                                                </Button>
+                                            <AlertDialogTrigger
+                                                render={
+                                                    <Button size="sm" variant="destructive" />
+                                                }
+                                            >
+                                                Delete
                                             </AlertDialogTrigger>
 
                                             <AlertDialogContent>

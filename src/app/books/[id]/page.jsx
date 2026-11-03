@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
@@ -133,15 +133,15 @@ async function BookDetailsContent({ params }) {
               <div className="space-y-3">
                 <BorrowDialog book={book} />
 
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  asChild
+                <Link
+                  href="/AllBooks"
+                  className={buttonVariants({
+                    variant: "outline",
+                    className: "w-full",
+                  })}
                 >
-                  <Link href="/AllBooks">
-                    Back to All Books
-                  </Link>
-                </Button>
+                  Back to All Books
+                </Link>
               </div>
 
             </CardContent>

@@ -41,47 +41,38 @@ export default function MyBorrows() {
   const [loading, setLoading] = useState(true);
   const [returningId, setReturningId] = useState(null);
 
-  const fetchBorrows = async () => {
-    if (!session?.user?.email) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const tokenResponse = await fetch("/api/auth/token");
-      const tokenData = await tokenResponse.json();
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_API_URL}/my-borrows`,
-        {
-          headers: {
-            Authorization: `Bearer ${tokenData.token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch borrows");
-      }
-
-      const data = await response.json();
-      setBorrows(data);
-    } catch (error) {
-      toast.error("Failed to load borrowed books");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-  if (isPending) return;
+    if (isPending || !session?.user?.email) return;
 
-  if (session?.user?.email) {
+    const fetchBorrows = async () => {
+      try {
+        const tokenResponse = await fetch("/api/auth/token");
+        const tokenData = await tokenResponse.json();
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_API_URL}/my-borrows`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokenData.token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch borrows");
+        }
+
+        const data = await response.json();
+        setBorrows(data);
+      } catch (error) {
+        toast.error("Failed to load borrowed books");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchBorrows();
-  } else {
-    setLoading(false);
-  }
-}, [isPending, session?.user?.email]);
+  }, [isPending, session?.user?.email]);
 
   const handleReturn = async (id) => {
     setReturningId(id);
@@ -119,7 +110,10 @@ export default function MyBorrows() {
     }
   };
 
-  if (loading) {
+  const isLoading =
+    isPending || (loading && Boolean(session?.user?.email));
+
+  if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="flex justify-center items-center gap-3">

@@ -50,7 +50,6 @@ const EditBookContent = () => {
         if (isPending) return;
 
         if (!session?.user?.email) {
-            setLoading(false);
             router.push("/login");
             return;
         }

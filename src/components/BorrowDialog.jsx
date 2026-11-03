@@ -37,33 +37,27 @@ const BorrowDialog = ({ book }) => {
       }
 
       // Send borrow request
-    const response = await fetch(
-  "http://localhost:5000/borrows",
-  {
-    method: "POST",
-        headers: {
-        "Content-Type": "application/json",
-      Authorization: `Bearer ${data.token}`,
-    },
-    body: JSON.stringify({
-      bookId: book._id,
-      bookTitle: book.title,
-      bookImage: book.image,
-    }),
-  }
-);
-if (!response.ok) {
-  const errorData = await response.json();
-  toast.error(errorData.message);
-  return;
-}
-
-toast.success("Book borrowed successfully!");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_API_URL}/borrows`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${data.token}`,
+          },
+          body: JSON.stringify({
+            bookId: book._id,
+            bookTitle: book.title,
+            bookImage: book.image,
+          }),
+        }
+      );
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Borrow failed");
+        toast.error(result.message || "Borrow failed");
+        return;
       }
 
       toast.success("Book borrowed successfully!");
@@ -79,14 +73,10 @@ toast.success("Book borrowed successfully!");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          className="w-full"
-          size="lg"
-          disabled={!user}
-        >
-          Borrow This Book
-        </Button>
+      <DialogTrigger
+        render={<Button className="w-full" size="lg" disabled={!user} />}
+      >
+        Borrow This Book
       </DialogTrigger>
 
       <DialogContent>

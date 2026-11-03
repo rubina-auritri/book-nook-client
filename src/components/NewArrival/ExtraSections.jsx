@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -121,11 +121,9 @@ export default function ExtraSections() {
           </div>
 
           <div className="text-center mt-10">
-            <Button asChild>
-              <Link href="/books">
-                Explore Books <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <Link href="/books" className={buttonVariants()}>
+              Explore Books <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
@@ -165,11 +163,12 @@ export default function ExtraSections() {
                 ))}
               </div>
 
-              <Button asChild className="mt-8">
-                <Link href="/books">
-                  Start Exploring <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+              <Link
+                href="/books"
+                className={buttonVariants({ className: "mt-8" })}
+              >
+                Start Exploring <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </div>
 
             {/* Right Content */}

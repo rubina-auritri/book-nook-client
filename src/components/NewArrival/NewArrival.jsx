@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 
 import BookCard from "@/components/NewArrival/BookCard";
 //import { getLatestBooks } from "@/lib/api";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function NewArrivals() {
   const [books, setBooks] = useState([]);
@@ -96,12 +96,16 @@ useEffect(() => {
 
       {/* See All Books */}
       <div className="mt-10 text-center">
-        <Button asChild size="lg" className="rounded-full px-8">
-          <Link href="/books">
-            See All Books
-            <ArrowRight className="ml-2" size={18} />
-          </Link>
-        </Button>
+        <Link
+          href="/books"
+          className={buttonVariants({
+            size: "lg",
+            className: "rounded-full px-8",
+          })}
+        >
+          See All Books
+          <ArrowRight className="ml-2" size={18} />
+        </Link>
       </div>
 
     </section>

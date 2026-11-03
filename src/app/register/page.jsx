@@ -36,7 +36,6 @@ export default function RegisterPage() {
       [e.target.name]: e.target.value,
     });
   };
-  console.log(formData);
 
   const handleRegister = async (e) => {
     e.preventDefault();

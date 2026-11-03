@@ -2,9 +2,10 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,7 @@ import { Menu } from "lucide-react";
 
 export default function Navbar() {
   const { data: session, isPending } = useSession();
+  const router = useRouter();
 
   const user = session?.user;
 
@@ -39,7 +41,8 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     await signOut();
-    window.location.href = "/";
+    router.push("/");
+    router.refresh();
   };
 
   return (
@@ -66,15 +69,13 @@ export default function Navbar() {
           {!isPending && (
             user ? (
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
-                    {user.name || "Account"}
-                  </Button>
+                <DropdownMenuTrigger render={<Button variant="outline" />}>
+                  {user.name || "Account"}
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile">My Profile</Link>
+                  <DropdownMenuItem render={<Link href="/profile" />}>
+                    My Profile
                   </DropdownMenuItem>
 
                   <DropdownMenuItem onClick={handleLogout}>
@@ -84,23 +85,28 @@ export default function Navbar() {
               </DropdownMenu>
             ) : (
               <>
-                <Button variant="outline" asChild>
-                  <Link href="/login">Login</Link>
-                </Button>
+                <Link
+                  href="/login"
+                  className={buttonVariants({ variant: "outline" })}
+                >
+                  Login
+                </Link>
 
-                <Button asChild>
-                  <Link href="/register">Register</Link>
-                </Button>
+                <Link href="/register" className={buttonVariants()}>
+                  Register
+                </Link>
               </>
             )
           )}
 
           {/* Mobile Menu */}
           <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="md:hidden">
-                <Menu />
-              </Button>
+            <SheetTrigger
+              render={
+                <Button variant="outline" size="icon" className="md:hidden" />
+              }
+            >
+              <Menu />
             </SheetTrigger>
 
             <SheetContent side="right">

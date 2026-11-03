@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function BookCard({ book }) {
   return (
@@ -32,11 +32,12 @@ export default function BookCard({ book }) {
           By {book.author}
         </p>
 
-        <Button asChild className="w-full">
-          <Link href={`/books/${book._id}`}>
-            View Details
-          </Link>
-        </Button>
+        <Link
+          href={`/books/${book._id}`}
+          className={buttonVariants({ className: "w-full" })}
+        >
+          View Details
+        </Link>
 
       </div>
     </div>
