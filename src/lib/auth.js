@@ -18,7 +18,7 @@ export const auth = betterAuth({
 
  trustedOrigins: [
     "http://localhost:3000",
-    "https://book-nook-client-dant.vercel.app/",
+    "https://book-nook-client-zeta.vercel.app/",
   ],
 
 
