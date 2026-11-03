@@ -1,11 +1,12 @@
+
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import { authClient } from "@/lib/auth-client";
-
 import { toast } from "react-hot-toast";
+
 import {
     Select,
     SelectContent,
@@ -27,11 +28,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-const EditBook = () => {
+const EditBookContent = () => {
     const { id } = useParams();
     const router = useRouter();
 
-    const { data: session } = authClient.useSession();
+    const { data: session, isPending } = authClient.useSession();
 
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false);
@@ -46,15 +47,24 @@ const EditBook = () => {
 
     // Get existing book data
     useEffect(() => {
-        if (!session?.user?.email || !id) return;
+        if (isPending) return;
+
+        if (!session?.user?.email) {
+            setLoading(false);
+            router.push("/login");
+            return;
+        }
+
+        if (!id) return;
 
         const fetchBook = async () => {
-
             try {
                 const jwttoken = await authClient.token();
+
                 if (!jwttoken?.data?.token) {
                     throw new Error("JWT token not found");
                 }
+
                 const res = await fetch(
                     `${process.env.NEXT_PUBLIC_SERVER_API_URL}/books/${id}`,
                     {
@@ -70,7 +80,7 @@ const EditBook = () => {
 
                 const data = await res.json();
 
-                // Only the owner can edit
+                // Check book ownership
                 if (data.userEmail !== session.user.email) {
                     toast.error("You cannot edit this book");
                     router.push("/my-books");
@@ -84,6 +94,7 @@ const EditBook = () => {
                     image: data.image || "",
                     description: data.description || "",
                 });
+
             } catch (error) {
                 toast.error(error.message);
             } finally {
@@ -92,7 +103,8 @@ const EditBook = () => {
         };
 
         fetchBook();
-    }, [id, session, router]);
+
+    }, [id, session?.user?.email, isPending, router]);
 
     // Handle input changes
     const handleChange = (e) => {
@@ -112,16 +124,18 @@ const EditBook = () => {
 
         try {
             const jwttoken = await authClient.token();
-                if (!jwttoken?.data?.token) {
-                    throw new Error("JWT token not found");
-                }
+
+            if (!jwttoken?.data?.token) {
+                throw new Error("JWT token not found");
+            }
+
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_SERVER_API_URL}/books/${id}`,
                 {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
-                         Authorization: `Bearer ${jwttoken.data.token}`,
+                        Authorization: `Bearer ${jwttoken.data.token}`,
                     },
                     body: JSON.stringify({
                         ...book,
@@ -158,9 +172,7 @@ const EditBook = () => {
 
     return (
         <div className="container mx-auto px-4 py-10">
-
             <Card className="max-w-2xl mx-auto">
-
                 <CardHeader>
                     <CardTitle className="text-2xl">
                         Edit Book
@@ -172,7 +184,6 @@ const EditBook = () => {
                 </CardHeader>
 
                 <CardContent>
-
                     <form onSubmit={handleSubmit} className="space-y-5">
 
                         {/* Title */}
@@ -264,12 +275,23 @@ const EditBook = () => {
                         </Button>
 
                     </form>
-
                 </CardContent>
             </Card>
-
         </div>
     );
 };
 
-export default EditBook;
+// Parent component with Suspense
+export default function EditBook() {
+    return (
+        <Suspense
+            fallback={
+                <div className="text-center py-20">
+                    Loading edit book...
+                </div>
+            }
+        >
+            <EditBookContent />
+        </Suspense>
+    );
+}
