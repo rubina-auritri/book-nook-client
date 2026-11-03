@@ -14,7 +14,7 @@ const Books = () => {
 
       
       try {
-        const res = await fetch("http://localhost:5000/books", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API_URL}/books`, {
           
         });
         const data = await res.json();

@@ -23,7 +23,7 @@ const Page = () => {
         }
 
         const res = await fetch(
-          `http://localhost:5000/my-books/${encodeURIComponent(
+          `${process.env.NEXT_PUBLIC_SERVER_API_URL}/my-books/${encodeURIComponent(
             session.user.email
           )}`,
           {
@@ -59,7 +59,7 @@ const Page = () => {
         }
 
       const res = await fetch(
-        `http://localhost:5000/books/${id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_API_URL}/books/${id}`,
         {
           method: "DELETE",
           headers: {

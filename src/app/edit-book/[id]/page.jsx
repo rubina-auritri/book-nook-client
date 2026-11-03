@@ -116,7 +116,7 @@ const EditBook = () => {
                     throw new Error("JWT token not found");
                 }
             const res = await fetch(
-                `http://localhost:5000/books/${id}`,
+                `${process.env.NEXT_PUBLIC_SERVER_API_URL}/books/${id}`,
                 {
                     method: "PUT",
                     headers: {

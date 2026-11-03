@@ -22,7 +22,7 @@ const BookDetails = async ({ params }) => {
     headers: await headers(),
   });
   const response = await fetch(
-    `http://localhost:5000/books/${id}`,
+    `${process.env.NEXT_PUBLIC_SERVER_API_URL}/books/${id}`,
     {
       cache: "no-store",
       headers: {

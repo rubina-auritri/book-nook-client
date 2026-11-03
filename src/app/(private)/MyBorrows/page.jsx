@@ -52,7 +52,7 @@ export default function MyBorrows() {
       const tokenData = await tokenResponse.json();
 
       const response = await fetch(
-        "http://localhost:5000/my-borrows",
+        `${process.env.NEXT_PUBLIC_SERVER_API_URL}/my-borrows`,
         {
           headers: {
             Authorization: `Bearer ${tokenData.token}`,
@@ -91,7 +91,7 @@ export default function MyBorrows() {
       const tokenData = await tokenResponse.json();
 
       const response = await fetch(
-        `http://localhost:5000/borrows/${id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_API_URL}/borrows/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -154,7 +154,7 @@ export default function MyBorrows() {
           </div>
         </div>
 
-        {/* Stats Card */}
+     
         <Card className="mb-8 border-none shadow-sm">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
@@ -196,7 +196,7 @@ export default function MyBorrows() {
                 </h3>
 
                 <p className="text-sm text-muted-foreground mt-2">
-                  You haven't borrowed any books yet.
+                  You haven&apos;t borrowed any books yet.
                 </p>
               </div>
             ) : (
