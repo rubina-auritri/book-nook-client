@@ -121,7 +121,7 @@ export default function ExtraSections() {
           </div>
 
           <div className="text-center mt-10">
-            <Link href="/books" className={buttonVariants()}>
+            <Link href="/AllBooks" className={buttonVariants()}>
               Explore Books <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </div>
@@ -164,7 +164,7 @@ export default function ExtraSections() {
               </div>
 
               <Link
-                href="/books"
+                href="/AllBooks"
                 className={buttonVariants({ className: "mt-8" })}
               >
                 Start Exploring <ArrowRight className="ml-2 h-4 w-4" />

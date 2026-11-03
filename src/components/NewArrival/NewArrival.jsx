@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -5,7 +6,6 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import BookCard from "@/components/NewArrival/BookCard";
-//import { getLatestBooks } from "@/lib/api";
 import { buttonVariants } from "@/components/ui/button";
 
 export default function NewArrivals() {
@@ -13,23 +13,30 @@ export default function NewArrivals() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
- /*
-useEffect(() => {
-  async function fetchBooks() {
-    try {
-      const data = await getLatestBooks();
-      setBooks(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  // Fetch latest 6 books
+  useEffect(() => {
+    async function fetchBooks() {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_API_URL}/new-arrivals`
+        );
+        console.log(response);
+
+        if (!response.ok) {
+          throw new Error("Failed to load new arrivals");
+        }
+
+        const data = await response.json();
+        setBooks(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
 
-  fetchBooks();
-}, []);
-*/
-
+    fetchBooks();
+  }, []);
 
   return (
     <section className="container mx-auto px-4 py-16 md:py-20">
@@ -51,7 +58,7 @@ useEffect(() => {
         </div>
 
         <Link
-          href="/books"
+          href="/AllBooks"
           className="hidden items-center gap-2 font-semibold text-indigo-600 transition hover:gap-3 sm:flex"
         >
           Explore All Books
@@ -97,7 +104,7 @@ useEffect(() => {
       {/* See All Books */}
       <div className="mt-10 text-center">
         <Link
-          href="/books"
+          href="/AllBooks"
           className={buttonVariants({
             size: "lg",
             className: "rounded-full px-8",
