@@ -79,7 +79,7 @@ export default function MyBooksTable({ books, onDelete }) {
                                                     </AlertDialogTitle>
 
                                                     <AlertDialogDescription>
-                                                        Do you want to delete "{book.title}"?
+                                                        Do you want to delete {book.title}?
                                                         This action cannot be undone.
                                                     </AlertDialogDescription>
                                                 </AlertDialogHeader>
